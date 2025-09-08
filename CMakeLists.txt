@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(Event_cam)
 
-# C++22 を使用
-set(CMAKE_CXX_STANDARD 22)
+# C++20 を使用
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Metavision SDK のパスを指定（必要に応じて変更）
@@ -24,10 +24,10 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # 実行ファイル
-add_executable(event_recorder src/main.cpp)
+add_executable(Event_cam src/main.cpp)
 
 # ライブラリをリンク
-target_link_libraries(event_recorder
+target_link_libraries(Event_cam
     MetavisionSDK::Driver          # カメラドライバ
     MetavisionSDK::Core            # 基本API
     MetavisionSDK::HAL             # ハードウェア抽象層
