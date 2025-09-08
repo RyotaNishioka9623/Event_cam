@@ -11,13 +11,10 @@ int main() {
     using namespace Metavision;
 
     try {
-        // カメラを開く
         Camera cam = Camera::from_first_available();
-
         std::atomic<bool> recording(false);
         std::unique_ptr<RawEventFileWriter> writer;
 
-        // イベント受け取りコールバック
         cam.cd().add_callback([&](const EventCD *begin, const EventCD *end) {
             if (recording && writer) {
                 writer->add_events(begin, end);
@@ -33,13 +30,12 @@ int main() {
             if (key == 's') {
                 if (!recording) {
                     std::cout << "Start recording...\n";
-                    // RawWriter → RawEventFileWriter に置き換え
                     writer = std::make_unique<RawEventFileWriter>("output.raw", cam.geometry());
                     recording = true;
                 } else {
                     std::cout << "Stop recording.\n";
                     recording = false;
-                    writer.reset(); // ファイルを閉じる
+                    writer.reset();
                 }
             } else if (key == 'q') {
                 std::cout << "Exit.\n";
