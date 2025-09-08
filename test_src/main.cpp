@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <atomic>
+#include <memory>
 
 int main() {
     using namespace Metavision;
@@ -14,7 +15,7 @@ int main() {
         Camera cam = Camera::from_first_available();
 
         std::atomic<bool> recording(false);
-        std::unique_ptr<RawWriter> writer;
+        std::unique_ptr<RawEventFileWriter> writer;
 
         // イベント受け取りコールバック
         cam.cd().add_callback([&](const EventCD *begin, const EventCD *end) {
@@ -32,12 +33,13 @@ int main() {
             if (key == 's') {
                 if (!recording) {
                     std::cout << "Start recording...\n";
-                    writer = std::make_unique<RawWriter>("output.raw", cam.geometry());
+                    // RawWriter → RawEventFileWriter に置き換え
+                    writer = std::make_unique<RawEventFileWriter>("output.raw", cam.geometry());
                     recording = true;
                 } else {
                     std::cout << "Stop recording.\n";
                     recording = false;
-                    writer.reset(); // close file
+                    writer.reset(); // ファイルを閉じる
                 }
             } else if (key == 'q') {
                 std::cout << "Exit.\n";
