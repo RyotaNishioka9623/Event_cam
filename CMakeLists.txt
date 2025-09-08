@@ -21,9 +21,4 @@ link_directories(
 
 add_executable(Event_cam test_src/main.cpp)
 
-target_link_libraries(Event_cam
-    ${OpenCV_LIBS}
-    MetavisionSDKDriver
-    MetavisionSDKBase
-    MetavisionSDKFileIO
-)
+target_link_libraries(Event_cam ${OpenCV_LIBS})
