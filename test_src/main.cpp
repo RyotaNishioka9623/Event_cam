@@ -5,49 +5,38 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <atomic>
-#include <memory>
 
-int main() {
-    using namespace Metavision;
+void count_events(const Metavision::EventCD *begin, const Metavision){
+    int counter = 0;
 
-    try {
-        Camera cam = Camera::from_first_available();
-        std::atomic<bool> recording(false);
-        std::unique_ptr<RawEventFileWriter> writer;
+    //コールバック処理
+    for (const Metavision::EventCD *ev = begin; ev != end; ++ev)
+    {
+        ++counter;
 
-        cam.cd().add_callback([&](const EventCD *begin, const EventCD *end) {
-            if (recording && writer) {
-                writer->add_events(begin, end);
-            }
-        });
-
-        cam.start();
-
-        std::cout << "Press 's' to start/stop recording, 'q' to quit.\n";
-
-        while (true) {
-            int key = cv::waitKey(1);
-            if (key == 's') {
-                if (!recording) {
-                    std::cout << "Start recording...\n";
-                    writer = std::make_unique<RawEventFileWriter>("output.raw", cam.geometry());
-                    recording = true;
-                } else {
-                    std::cout << "Stop recording.\n";
-                    recording = false;
-                    writer.reset();
-                }
-            } else if (key == 'q') {
-                std::cout << "Exit.\n";
-                break;
-            }
-        }
-
-        cam.stop();
-    } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return 1;
+        std::cout << "Event received: coordinates(" << ev->x <<", "<< ev->y << "), t: " << ev->t << ", polarity:" << ev->p << esd::endl;
     }
 
-    return 0;
+    std::cout << "There were " << counter << " events in this callback" << std::endl;
+}
+
+int main(){
+    Metavision::Camera cam;
+
+    if(argc >= 2)
+    {
+        cam = Metavision::Camera::from_file(argv[1]);
+    }
+    else
+    {
+        cam = Metavision::Camera::from_first_available();
+    }
+
+    cam.cd().add_callback(count_events);
+
+    cam.start();
+
+    while(cam.is_running()){}
+
+    cam.stop();
 }

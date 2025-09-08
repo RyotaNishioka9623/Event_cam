@@ -1,27 +1,29 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.22)
 project(Event_cam)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Metavision SDK のパスを /usr/local に変更
-set(METAVISION_SDK_PATH "/usr/local")
+# OpenCVを探す
+find_package(OpenCV REQUIRED)
+
+# Metavision SDKのパス（必要に応じて変更）
+set(METAVISION_SDK_DIR "/usr/local")  # SDKのインストールディレクトリに合わせて変更
 
 include_directories(
-    ${METAVISION_SDK_PATH}/include
+    ${OpenCV_INCLUDE_DIRS}
+    ${METAVISION_SDK_DIR}/include
 )
 
-# ライブラリパス（必要に応じて）
 link_directories(
-    ${METAVISION_SDK_PATH}/lib
+    ${METAVISION_SDK_DIR}/lib
 )
 
-# OpenCV
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-# 実行ファイル
 add_executable(Event_cam test_src/main.cpp)
 
-# ライブラリリンク
-target_link_libraries(Event_cam ${OpenCV_LIBS})
+target_link_libraries(Event_cam
+    ${OpenCV_LIBS}
+    MetavisionSDKDriver
+    MetavisionSDKBase
+    MetavisionSDKFileIO
+)
