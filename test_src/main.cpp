@@ -1,6 +1,6 @@
 #include <metavision/sdk/base/events/event_cd.h>
 #include <metavision/sdk/driver/camera.h>
-#include <metavision/sdk/driver/raw_writer.h>
+#include <metavision/sdk/driver/raw_event_file_writer.h>
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
